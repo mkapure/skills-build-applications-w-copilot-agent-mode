@@ -5,10 +5,10 @@ import teamsRouter from './routes/teams.js';
 import activitiesRouter from './routes/activities.js';
 import leaderboardRouter from './routes/leaderboard.js';
 import workoutsRouter from './routes/workouts.js';
+import { MONGODB_URI, connectToDatabase } from './database.js';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 8000;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/octofit_db';
 
 const codespaceName = process.env.CODESPACE_NAME;
 const baseUrl = codespaceName
@@ -40,7 +40,7 @@ app.get('/api/health', async (_req, res) => {
 
 async function startServer() {
   try {
-    await mongoose.connect(MONGODB_URI);
+    await connectToDatabase();
     console.log(`Connected to MongoDB at ${MONGODB_URI}`);
   } catch (error) {
     console.error('MongoDB connection failed:', error);
