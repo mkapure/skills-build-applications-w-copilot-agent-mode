@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import { fetchCollection } from '../lib/api.js';
+import { normalizeCollectionResponse } from '../lib/api.js';
+
+const codespaceName = import.meta.env.VITE_CODESPACE_NAME;
+const usersEndpoint = codespaceName
+  ? `https://${codespaceName}-8000.app.github.dev/api/users/`
+  : 'http://localhost:8000/api/users/';
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -8,10 +13,17 @@ export default function Users() {
   useEffect(() => {
     let isMounted = true;
 
-    fetchCollection('users')
-      .then((data) => {
+    fetch(usersEndpoint)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Request failed: ${response.status}`);
+        }
+
+        return response.json();
+      })
+      .then((payload) => {
         if (isMounted) {
-          setUsers(data);
+          setUsers(normalizeCollectionResponse(payload));
         }
       })
       .catch((err) => {

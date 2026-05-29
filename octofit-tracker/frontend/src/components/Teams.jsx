@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import { fetchCollection } from '../lib/api.js';
+import { normalizeCollectionResponse } from '../lib/api.js';
+
+const codespaceName = import.meta.env.VITE_CODESPACE_NAME;
+const teamsEndpoint = codespaceName
+  ? `https://${codespaceName}-8000.app.github.dev/api/teams/`
+  : 'http://localhost:8000/api/teams/';
 
 export default function Teams() {
   const [teams, setTeams] = useState([]);
@@ -8,10 +13,17 @@ export default function Teams() {
   useEffect(() => {
     let isMounted = true;
 
-    fetchCollection('teams')
-      .then((data) => {
+    fetch(teamsEndpoint)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Request failed: ${response.status}`);
+        }
+
+        return response.json();
+      })
+      .then((payload) => {
         if (isMounted) {
-          setTeams(data);
+          setTeams(normalizeCollectionResponse(payload));
         }
       })
       .catch((err) => {

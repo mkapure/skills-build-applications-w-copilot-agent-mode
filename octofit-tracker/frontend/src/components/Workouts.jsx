@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import { fetchCollection } from '../lib/api.js';
+import { normalizeCollectionResponse } from '../lib/api.js';
+
+const codespaceName = import.meta.env.VITE_CODESPACE_NAME;
+const workoutsEndpoint = codespaceName
+  ? `https://${codespaceName}-8000.app.github.dev/api/workouts/`
+  : 'http://localhost:8000/api/workouts/';
 
 export default function Workouts() {
   const [workouts, setWorkouts] = useState([]);
@@ -8,10 +13,17 @@ export default function Workouts() {
   useEffect(() => {
     let isMounted = true;
 
-    fetchCollection('workouts')
-      .then((data) => {
+    fetch(workoutsEndpoint)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Request failed: ${response.status}`);
+        }
+
+        return response.json();
+      })
+      .then((payload) => {
         if (isMounted) {
-          setWorkouts(data);
+          setWorkouts(normalizeCollectionResponse(payload));
         }
       })
       .catch((err) => {
