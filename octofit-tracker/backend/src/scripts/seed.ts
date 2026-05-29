@@ -3,7 +3,7 @@ import { Team } from '../models/Team.js';
 import { Activity } from '../models/Activity.js';
 import { Leaderboard } from '../models/Leaderboard.js';
 import { Workout } from '../models/Workout.js';
-import { MONGODB_URI, connectToDatabase, disconnectFromDatabase } from '../database.js';
+import { MONGODB_URI, connectToDatabase, disconnectFromDatabase } from '../config/database.js';
 
 async function seedDatabase() {
   console.log('Seed the octofit_db database with test data');
