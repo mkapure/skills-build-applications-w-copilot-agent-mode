@@ -17,6 +17,23 @@ const baseUrl = codespaceName
 
 app.use(express.json());
 
+app.get('/', (_req, res) => {
+  res.json({
+    service: 'octofit-backend',
+    status: 'ok',
+    message: 'API is running. Use /api/* endpoints.',
+    baseUrl,
+    docs: [
+      '/api/health',
+      '/api/users',
+      '/api/teams',
+      '/api/activities',
+      '/api/leaderboard',
+      '/api/workouts',
+    ],
+  });
+});
+
 app.use('/api/users', usersRouter);
 app.use('/api/teams', teamsRouter);
 app.use('/api/activities', activitiesRouter);
